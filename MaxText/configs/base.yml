@@ -75,7 +75,7 @@ gcs_metrics: False
 save_config_to_gcs: False
 
 # Activation dtypes.
-dtype: "bfloat16"
+dtype: "float32"
 # Used to configure quantization in the transformer layers, defaults to null implying bf16.
 # Possible alternative settings are as follows:
 # 'int8' for dynamic range quantization using 8-bits
@@ -85,8 +85,8 @@ dtype: "bfloat16"
 quantization: ""
 # Choose one of default, high, and highest.
 # https://kolonist26-jax-kr.readthedocs.io/en/latest/jax.lax.html#jax.lax.Precision
-matmul_precision: "default"
-activations_in_float32: False # Sets activations to float32 before nonlinearity it true, else dtype
+matmul_precision: "highest"
+activations_in_float32: True # Sets activations to float32 before nonlinearity it true, else dtype
 # Used to replicate the quantization scale to avoid the inefficient XLA fusion for 2d sharding.
 replicate_quant_scale: False
 # Path to file with quantization config for intmp.
@@ -99,7 +99,7 @@ quantize_kvcache: False # Set to True to quantize KV Cache values, defaults to F
 # Default to "heads_and_dkv" for faster compution, kv_quant_axis is not used when quantize_kvcache is False
 #   - "dkv" is expected with better accuracy but degraded computation
 kv_quant_axis: "heads_and_dkv"
-kv_quant_dtype: "int8"
+kv_quant_dtype: ""
 checkpoint_is_quantized: False # Set to True if reading from a saved aqt quantized checkpoint
 # Saves params quantized on fly at following path
 save_quantized_params_path: ""
@@ -115,7 +115,7 @@ decoder_block: "llama2" # which style of DecoderBlock to use.
 # Global parameter scale needs to be a power of 2. If you want finer grained control of the model sizes
 # then you should explicitly set base_embed_dim, base_num_query_heads, base_num_kv_heads,
 # base_mlp_dim, base_num_decoder_layers and/or head_dim.
-weight_dtype: bfloat16
+weight_dtype: float32
 global_parameter_scale: 1
 base_emb_dim: 2048
 base_num_query_heads: 16
@@ -127,10 +127,10 @@ mlp_activations: ["silu", "linear"]
 dropout_rate: 0.0
 logits_via_embedding: False
 normalize_embedding_logits: True  # whether to normlize pre-softmax logits if logits_via_embedding is true
-logits_dot_in_fp32: False  # whether to use fp32 in logits_dense or shared_embedding dot product for stability
-cast_logits_to_fp32: False # whether to cast the logits to fp32. The higher precision is generally beneficial, but it can vary slightly.
-float32_qk_product: False # in dot_product attention, whether to cast to fp32 the inputs to qk product
-float32_logits: False # in dot_product attention, whether to cast to fp32 the inputs to softmax
+logits_dot_in_fp32: True  # whether to use fp32 in logits_dense or shared_embedding dot product for stability
+cast_logits_to_fp32: True # whether to cast the logits to fp32. The higher precision is generally beneficial, but it can vary slightly.
+float32_qk_product: True # in dot_product attention, whether to cast to fp32 the inputs to qk product
+float32_logits: True # in dot_product attention, whether to cast to fp32 the inputs to softmax
 
 # mixture of experts (moe)
 num_experts: 1
@@ -472,7 +472,7 @@ dump_hlo_upload_all: False # If true all hosts dump HLO, false only jax.process_
 
 # When dropout is false the model is a deterministic function of the
 # data_shuffle_seed and init_weights_seed (i.e. reproducible losses)
-enable_dropout: True
+enable_dropout: False
 enable_data_shuffling: True
 data_shuffle_seed: 0
 init_weights_seed: 0
