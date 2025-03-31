@@ -596,7 +596,7 @@ reshape_q: False
 prometheus_port: 0
 
 # Maxengine server
-enable_jax_profiler: False
+enable_jax_profiler: True
 jax_profiler_port: 9999
 
 log_config: True # Prints the config (after defaults have been set by pyconfig logic)

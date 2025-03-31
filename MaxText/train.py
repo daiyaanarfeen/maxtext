@@ -985,8 +985,7 @@ def main(argv: Sequence[str]) -> None:
   )
   diagnostic_config = diagnostic_configuration.DiagnosticConfig(debug_config)
   with diagnostic.diagnose(diagnostic_config):
-    with jax.profiler.trace("profiler_output", create_perfetto_link=True):
-      train_loop(config)
+    train_loop(config)
 
 
 if __name__ == "__main__":
