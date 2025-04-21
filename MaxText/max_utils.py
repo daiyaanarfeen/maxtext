@@ -522,6 +522,16 @@ def create_device_mesh(config, devices=None):
   """Creates a device mesh with each slice in its own data parallel group. If there is only one slice, uses two replicas"""
   if devices is None:
     devices = jax.devices()
+
+  ### FILTER DEVICES
+  selected_tpu_devices = []
+  coords_set = [(0, 0, 0, 0), (1, 0, 0, 0)]
+  for device in devices:
+    if tuple(device.coords + [device.core_on_chip]) in coords_set:
+      selected_tpu_devices.append(device)
+  devices = selected_tpu_devices
+  ### FILTER DEVICES
+
   num_devices = len(devices)
   num_slices = 1 if config.inference_benchmark_test else config.num_slices
   num_devices_per_slice = num_devices // num_slices
